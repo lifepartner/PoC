@@ -1,36 +1,43 @@
-import type { MotionProps } from 'framer-motion';
-import type { BoxProps } from '@mui/material/Box';
-
-import { m } from 'framer-motion';
-import { forwardRef } from 'react';
-
-import Box from '@mui/material/Box';
-
+import { m, MotionProps } from 'framer-motion';
+// @mui
+import Box, { BoxProps } from '@mui/material/Box';
+//
 import { varContainer } from './variants';
 
 // ----------------------------------------------------------------------
 
-export type MotionContainerProps = BoxProps &
-  MotionProps & {
-    animate?: boolean;
-    action?: boolean;
-  };
+type IProps = BoxProps & MotionProps;
 
-export const MotionContainer = forwardRef<HTMLDivElement, MotionContainerProps>((props, ref) => {
-  const { animate, action = false, sx, children, ...other } = props;
+export interface Props extends IProps {
+  animate?: boolean;
+  action?: boolean;
+}
+
+export default function MotionContainer({ animate, action = false, children, ...other }: Props) {
+  if (action) {
+    return (
+      <Box
+        component={m.div}
+        initial={false}
+        animate={animate ? 'animate' : 'exit'}
+        variants={varContainer()}
+        {...other}
+      >
+        {children}
+      </Box>
+    );
+  }
 
   return (
     <Box
-      ref={ref}
       component={m.div}
+      initial="initial"
+      animate="animate"
+      exit="exit"
       variants={varContainer()}
-      initial={action ? false : 'initial'}
-      animate={action ? (animate ? 'animate' : 'exit') : 'animate'}
-      exit={action ? undefined : 'exit'}
-      sx={sx}
       {...other}
     >
       {children}
     </Box>
   );
-});
+}

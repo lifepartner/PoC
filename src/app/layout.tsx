@@ -1,90 +1,86 @@
-import 'src/global.css';
+// scrollbar
+import 'simplebar-react/dist/simplebar.min.css';
 
-import type { Metadata, Viewport } from 'next';
-
-import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
-
-import { CONFIG } from 'src/global-config';
-import { primary } from 'src/theme/core/palette';
-import { themeConfig, ThemeProvider } from 'src/theme';
-
-import { ProgressBar } from 'src/components/progress-bar';
-import { MotionLazy } from 'src/components/animate/motion-lazy';
-import { detectSettings } from 'src/components/settings/server';
-import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
-
-// import { AuthProvider } from 'src/auth/context/jwt';
-import { AuthProvider, AuthProvider as FirebaseAuthProvider } from 'src/auth/context/firebase';
+// image
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // ----------------------------------------------------------------------
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  themeColor: primary.main,
-};
+// theme
+import ThemeProvider from 'src/theme';
+import { primaryFont } from 'src/theme/typography';
+// components
+import ProgressBar from 'src/components/progress-bar';
+import { MotionLazy } from 'src/components/animate/motion-lazy';
+import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
+// auth
+import { AuthProvider, AuthConsumer } from 'src/auth/context/firebase';
 
-export const metadata: Metadata = {
+// ----------------------------------------------------------------------
+
+export const metadata = {
+  title: 'Minimal UI Kit',
+  description:
+    'The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI ©, ready to be customized to your style',
+  keywords: 'react,material,kit,application,dashboard,admin,template',
+  themeColor: '#000000',
+  manifest: '/manifest.json',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
   icons: [
     {
       rel: 'icon',
-      url: `${CONFIG.assetsDir}/favicon.ico`,
+      url: '/favicon/favicon.ico',
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '16x16',
+      url: '/favicon/favicon-16x16.png',
+    },
+    {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '32x32',
+      url: '/favicon/favicon-32x32.png',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '180x180',
+      url: '/favicon/apple-touch-icon.png',
     },
   ],
 };
 
-// ----------------------------------------------------------------------
-
-type RootLayoutProps = {
+type Props = {
   children: React.ReactNode;
 };
 
-async function getAppConfig() {
-  if (CONFIG.isStaticExport) {
-    return {
-      cookieSettings: undefined,
-      dir: defaultSettings.direction,
-    };
-  } else {
-    const [settings] = await Promise.all([detectSettings()]);
-
-    return {
-      cookieSettings: settings,
-      dir: settings.direction,
-    };
-  }
-}
-
-export default async function RootLayout({ children }: RootLayoutProps) {
-  const appConfig = await getAppConfig();
-
+export default function RootLayout({ children }: Props) {
   return (
-    <html lang="ja" dir={appConfig.dir} suppressHydrationWarning>
+    <html lang="ja" className={primaryFont.className}>
       <body>
-        <InitColorSchemeScript
-          defaultMode={themeConfig.defaultMode}
-          modeStorageKey={themeConfig.modeStorageKey}
-          attribute={themeConfig.cssVariables.colorSchemeSelector}
-        />
-
         <AuthProvider>
           <SettingsProvider
-            cookieSettings={appConfig.cookieSettings}
-            defaultSettings={defaultSettings}
+            defaultSettings={{
+              themeMode: 'light', // 'light' | 'dark'
+              themeDirection: 'ltr', //  'rtl' | 'ltr'
+              themeContrast: 'default', // 'default' | 'bold'
+              themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+              themeStretch: false,
+            }}
           >
-            <AppRouterCacheProvider options={{ key: 'css' }}>
-              <ThemeProvider
-                defaultMode={themeConfig.defaultMode}
-                modeStorageKey={themeConfig.modeStorageKey}
-              >
-                <MotionLazy>
-                  <ProgressBar />
-                  <SettingsDrawer defaultSettings={defaultSettings} />
-                  {children}
-                </MotionLazy>
-              </ThemeProvider>
-            </AppRouterCacheProvider>
+            <ThemeProvider>
+              <MotionLazy>
+                <SettingsDrawer />
+                <ProgressBar />
+                <AuthConsumer>{children}</AuthConsumer>
+              </MotionLazy>
+            </ThemeProvider>
           </SettingsProvider>
         </AuthProvider>
       </body>

@@ -1,41 +1,25 @@
-'use client';
-
-import type { Theme, SxProps } from '@mui/material/styles';
-
-import { Fragment } from 'react';
-
-import Portal from '@mui/material/Portal';
-import { styled } from '@mui/material/styles';
+// @mui
+import Box, { BoxProps } from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 
 // ----------------------------------------------------------------------
 
-export type LoadingScreenProps = React.ComponentProps<'div'> & {
-  portal?: boolean;
-  sx?: SxProps<Theme>;
-};
-
-export function LoadingScreen({ portal, sx, ...other }: LoadingScreenProps) {
-  const PortalWrapper = portal ? Portal : Fragment;
-
+export default function LoadingScreen({ sx, ...other }: BoxProps) {
   return (
-    <PortalWrapper>
-      <LoadingContent sx={sx} {...other}>
-        <LinearProgress color="inherit" sx={{ width: 1, maxWidth: 360 }} />
-      </LoadingContent>
-    </PortalWrapper>
+    <Box
+      sx={{
+        px: 5,
+        width: 1,
+        flexGrow: 1,
+        minHeight: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...sx,
+      }}
+      {...other}
+    >
+      <LinearProgress color="inherit" sx={{ width: 1, maxWidth: 360 }} />
+    </Box>
   );
 }
-
-// ----------------------------------------------------------------------
-
-const LoadingContent = styled('div')(({ theme }) => ({
-  flexGrow: 1,
-  width: '100%',
-  display: 'flex',
-  minHeight: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
-  paddingLeft: theme.spacing(5),
-  paddingRight: theme.spacing(5),
-}));

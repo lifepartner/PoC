@@ -1,19 +1,9 @@
-'use client';
-
-import { useEffect } from 'react';
-
-import { useRouter } from 'src/routes/hooks';
-
-import { CONFIG } from 'src/global-config';
+import { redirect } from 'next/navigation';
+// config
+import { PATH_AFTER_LOGIN } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push(CONFIG.auth.redirectPath);
-  }, [router]);
-
-  return null;
+export default async function HomePage() {
+  redirect(PATH_AFTER_LOGIN);
 }

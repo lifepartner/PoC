@@ -1,56 +1,26 @@
-'use client';
-
-import type { IconProps } from '@iconify/react';
-import type { Theme, SxProps } from '@mui/material/styles';
-
 import { forwardRef } from 'react';
-import { Icon, disableCache } from '@iconify/react';
-import { mergeClasses } from 'minimal-shared/utils';
-
-import NoSsr from '@mui/material/NoSsr';
-import { styled } from '@mui/material/styles';
-
-import { iconifyClasses } from './classes';
-
-// ----------------------------------------------------------------------
-
-export type IconifyProps = React.ComponentProps<typeof IconRoot> & IconProps;
-
-export const Iconify = forwardRef<SVGSVGElement, IconifyProps>((props, ref) => {
-  const { className, width = 20, sx, ...other } = props;
-
-  const baseStyles: SxProps<Theme> = {
-    width,
-    height: width,
-    flexShrink: 0,
-    display: 'inline-flex',
-  };
-
-  const renderFallback = () => (
-    <IconFallback
-      className={mergeClasses([iconifyClasses.root, className])}
-      sx={[baseStyles, ...(Array.isArray(sx) ? sx : [sx])]}
-    />
-  );
-
-  return (
-    <NoSsr fallback={renderFallback()}>
-      <IconRoot
-        ssr
-        ref={ref}
-        className={mergeClasses([iconifyClasses.root, className])}
-        sx={[baseStyles, ...(Array.isArray(sx) ? sx : [sx])]}
-        {...other}
-      />
-    </NoSsr>
-  );
-});
-
-// https://iconify.design/docs/iconify-icon/disable-cache.html
-disableCache('local');
+// icons
+import { Icon } from '@iconify/react';
+// @mui
+import Box, { BoxProps } from '@mui/material/Box';
+//
+import { IconifyProps } from './types';
 
 // ----------------------------------------------------------------------
 
-const IconRoot = styled(Icon)``;
+interface Props extends BoxProps {
+  icon: IconifyProps;
+}
 
-const IconFallback = styled('span')``;
+const Iconify = forwardRef<SVGElement, Props>(({ icon, width = 20, sx, ...other }, ref) => (
+  <Box
+    ref={ref}
+    component={Icon}
+    className="component-iconify"
+    icon={icon}
+    sx={{ width, height: width, ...sx }}
+    {...other}
+  />
+));
+
+export default Iconify;

@@ -1,19 +1,17 @@
 'use client';
 
-import { LazyMotion } from 'framer-motion';
+import { LazyMotion, m, domMax } from 'framer-motion';
 
 // ----------------------------------------------------------------------
 
-export type MotionLazyProps = {
+type Props = {
   children: React.ReactNode;
 };
 
-const loadFeaturesAsync = async () => import('./features').then((res) => res.default);
-
-export function MotionLazy({ children }: MotionLazyProps) {
+export function MotionLazy({ children }: Props) {
   return (
-    <LazyMotion strict features={loadFeaturesAsync}>
-      {children}
+    <LazyMotion strict features={domMax}>
+      <m.div style={{ height: '100%' }}> {children} </m.div>
     </LazyMotion>
   );
 }

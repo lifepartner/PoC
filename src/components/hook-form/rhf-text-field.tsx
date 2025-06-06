@@ -1,26 +1,15 @@
-import type { TextFieldProps } from '@mui/material/TextField';
-
-import { Controller, useFormContext } from 'react-hook-form';
-import { transformValue, transformValueOnBlur, transformValueOnChange } from 'minimal-shared/utils';
-
-import TextField from '@mui/material/TextField';
+import { useFormContext, Controller } from 'react-hook-form';
+// @mui
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
-export type RHFTextFieldProps = TextFieldProps & {
+type Props = TextFieldProps & {
   name: string;
 };
 
-export function RHFTextField({
-  name,
-  helperText,
-  slotProps,
-  type = 'text',
-  ...other
-}: RHFTextFieldProps) {
+export default function RHFTextField({ name, helperText, type, ...other }: Props) {
   const { control } = useFormContext();
-
-  const isNumberType = type === 'number';
 
   return (
     <Controller
@@ -30,32 +19,17 @@ export function RHFTextField({
         <TextField
           {...field}
           fullWidth
-          value={isNumberType ? transformValue(field.value) : field.value}
+          type={type}
+          value={type === 'number' && field.value === 0 ? '' : field.value}
           onChange={(event) => {
-            const transformedValue = isNumberType
-              ? transformValueOnChange(event.target.value)
-              : event.target.value;
-
-            field.onChange(transformedValue);
+            if (type === 'number') {
+              field.onChange(Number(event.target.value));
+            } else {
+              field.onChange(event.target.value);
+            }
           }}
-          onBlur={(event) => {
-            const transformedValue = isNumberType
-              ? transformValueOnBlur(event.target.value)
-              : event.target.value;
-
-            field.onChange(transformedValue);
-          }}
-          type={isNumberType ? 'text' : type}
           error={!!error}
-          helperText={error?.message ?? helperText}
-          slotProps={{
-            ...slotProps,
-            htmlInput: {
-              autoComplete: 'off',
-              ...slotProps?.htmlInput,
-              ...(isNumberType && { inputMode: 'decimal', pattern: '[0-9]*\\.?[0-9]*' }),
-            },
-          }}
+          helperText={error ? error?.message : helperText}
           {...other}
         />
       )}

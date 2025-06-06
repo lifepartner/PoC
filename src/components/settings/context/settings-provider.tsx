@@ -1,35 +1,47 @@
 'use client';
 
-import { isEqual } from 'es-toolkit';
-import { getCookie, getStorage } from 'minimal-shared/utils';
-import { useMemo, useState, useEffect, useCallback } from 'react';
-import { useCookies, useLocalStorage } from 'minimal-shared/hooks';
-
+import isEqual from 'lodash/isEqual';
+import { useEffect, useMemo, useCallback, useState } from 'react';
+// hooks
+import { useLocalStorage } from 'src/hooks/use-local-storage';
+// utils
+import { localStorageGetItem } from 'src/utils/storage-available';
+//
+import { SettingsValueProps } from '../types';
 import { SettingsContext } from './settings-context';
-import { SETTINGS_STORAGE_KEY } from '../settings-config';
-
-import type { SettingsState, SettingsProviderProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-export function SettingsProvider({
-  children,
-  cookieSettings,
-  defaultSettings,
-  storageKey = SETTINGS_STORAGE_KEY,
-}: SettingsProviderProps) {
-  const isCookieEnabled = !!cookieSettings;
-  const useStorage = isCookieEnabled ? useCookies : useLocalStorage;
-  const initialSettings = isCookieEnabled ? cookieSettings : defaultSettings;
-  const getStorageValue = isCookieEnabled ? getCookie : getStorage;
+const STORAGE_KEY = 'settings';
 
-  const { state, setState, resetState, setField } = useStorage<SettingsState>(
-    storageKey,
-    initialSettings
-  );
+type SettingsProviderProps = {
+  children: React.ReactNode;
+  defaultSettings: SettingsValueProps;
+};
+
+export function SettingsProvider({ children, defaultSettings }: SettingsProviderProps) {
+  const { state, update, reset } = useLocalStorage(STORAGE_KEY, defaultSettings);
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
+  const isArabic = localStorageGetItem('i18nextLng') === 'ar';
+
+  useEffect(() => {
+    if (isArabic) {
+      onChangeDirectionByLang('ar');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isArabic]);
+
+  // Direction by lang
+  const onChangeDirectionByLang = useCallback(
+    (lang: string) => {
+      update('themeDirection', lang === 'ar' ? 'rtl' : 'ltr');
+    },
+    [update]
+  );
+
+  // Drawer
   const onToggleDrawer = useCallback(() => {
     setOpenDrawer((prev) => !prev);
   }, []);
@@ -40,38 +52,30 @@ export function SettingsProvider({
 
   const canReset = !isEqual(state, defaultSettings);
 
-  const onReset = useCallback(() => {
-    resetState(defaultSettings);
-  }, [defaultSettings, resetState]);
-
-  // Version check and reset handling
-  useEffect(() => {
-    const storedValue = getStorageValue<SettingsState>(storageKey);
-
-    if (storedValue) {
-      try {
-        if (!storedValue.version || storedValue.version !== defaultSettings.version) {
-          onReset();
-        }
-      } catch {
-        onReset();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const memoizedValue = useMemo(
     () => ({
+      ...state,
+      onUpdate: update,
+      // Direction
+      onChangeDirectionByLang,
+      // Reset
       canReset,
-      onReset,
+      onReset: reset,
+      // Drawer
+      open: openDrawer,
+      onToggle: onToggleDrawer,
+      onClose: onCloseDrawer,
+    }),
+    [
+      reset,
+      update,
+      state,
+      canReset,
       openDrawer,
       onCloseDrawer,
       onToggleDrawer,
-      state,
-      setState,
-      setField,
-    }),
-    [canReset, onReset, openDrawer, onCloseDrawer, onToggleDrawer, state, setField, setState]
+      onChangeDirectionByLang,
+    ]
   );
 
   return <SettingsContext.Provider value={memoizedValue}>{children}</SettingsContext.Provider>;

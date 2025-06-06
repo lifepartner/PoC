@@ -1,32 +1,24 @@
-import type { PaperProps } from '@mui/material/Paper';
-import type { PopoverProps } from '@mui/material/Popover';
-import type { Theme, SxProps } from '@mui/material/styles';
+// @mui
+import { PopoverProps } from '@mui/material/Popover';
 
 // ----------------------------------------------------------------------
 
-export type PopoverArrow = {
-  hide?: boolean;
-  size?: number;
-  offset?: number;
-  sx?: SxProps<Theme>;
-  placement?:
-    | 'top-left'
-    | 'top-center'
-    | 'top-right'
-    | 'bottom-left'
-    | 'bottom-center'
-    | 'bottom-right'
-    | 'left-top'
-    | 'left-center'
-    | 'left-bottom'
-    | 'right-top'
-    | 'right-center'
-    | 'right-bottom';
-};
+export type MenuPopoverArrowValue =
+  | 'top-left'
+  | 'top-center'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right'
+  | 'left-top'
+  | 'left-center'
+  | 'left-bottom'
+  | 'right-top'
+  | 'right-center'
+  | 'right-bottom';
 
-export type CustomPopoverProps = PopoverProps & {
-  slotProps?: PopoverProps['slotProps'] & {
-    arrow?: PopoverArrow;
-    paper?: PaperProps;
-  };
-};
+export interface MenuPopoverProps extends Omit<PopoverProps, 'open'> {
+  open: HTMLElement | null;
+  arrow?: MenuPopoverArrowValue;
+  hiddenArrow?: boolean;
+}

@@ -1,51 +1,59 @@
-import type { Variants, Transition } from 'framer-motion';
-
-import { transitionExit, transitionEnter } from './transition';
+import { VariantsType } from '../types';
+import { varTranEnter, varTranExit } from './transition';
 
 // ----------------------------------------------------------------------
 
-type Direction = 'in' | 'inX' | 'inY' | 'out' | 'outX' | 'outY';
+export const varScale = (props?: VariantsType) => {
+  const durationIn = props?.durationIn;
+  const durationOut = props?.durationOut;
+  const easeIn = props?.easeIn;
+  const easeOut = props?.easeOut;
 
-type Options = {
-  transitionIn?: Transition;
-  transitionOut?: Transition;
-};
-
-export const varScale = (direction: Direction, options?: Options): Variants => {
-  const transitionIn = options?.transitionIn;
-  const transitionOut = options?.transitionOut;
-
-  const variants: Record<Direction, Variants> = {
-    /**** In ****/
-    in: {
-      initial: { scale: 0, opacity: 0 },
-      animate: { scale: 1, opacity: 1, transition: transitionEnter(transitionIn) },
-      exit: { scale: 0, opacity: 0, transition: transitionExit(transitionOut) },
-    },
+  return {
+    // IN
     inX: {
       initial: { scaleX: 0, opacity: 0 },
-      animate: { scaleX: 1, opacity: 1, transition: transitionEnter(transitionIn) },
-      exit: { scaleX: 0, opacity: 0, transition: transitionExit(transitionOut) },
+      animate: {
+        scaleX: 1,
+        opacity: 1,
+        transition: varTranEnter({ durationIn, easeIn }),
+      },
+      exit: {
+        scaleX: 0,
+        opacity: 0,
+        transition: varTranExit({ durationOut, easeOut }),
+      },
     },
     inY: {
       initial: { scaleY: 0, opacity: 0 },
-      animate: { scaleY: 1, opacity: 1, transition: transitionEnter(transitionIn) },
-      exit: { scaleY: 0, opacity: 0, transition: transitionExit(transitionOut) },
+      animate: {
+        scaleY: 1,
+        opacity: 1,
+        transition: varTranEnter({ durationIn, easeIn }),
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        transition: varTranExit({ durationOut, easeOut }),
+      },
     },
-    /**** Out ****/
-    out: {
-      initial: { scale: 1, opacity: 1 },
-      animate: { scale: 0, opacity: 0, transition: transitionEnter(transitionIn) },
-    },
+
+    // OUT
     outX: {
       initial: { scaleX: 1, opacity: 1 },
-      animate: { scaleX: 0, opacity: 0, transition: transitionEnter(transitionIn) },
+      animate: {
+        scaleX: 0,
+        opacity: 0,
+        transition: varTranEnter({ durationIn, easeIn }),
+      },
     },
     outY: {
       initial: { scaleY: 1, opacity: 1 },
-      animate: { scaleY: 0, opacity: 0, transition: transitionEnter(transitionIn) },
+      animate: {
+        scaleY: 0,
+        opacity: 0,
+        transition: varTranEnter({ durationIn, easeIn }),
+      },
     },
   };
-
-  return variants[direction];
 };

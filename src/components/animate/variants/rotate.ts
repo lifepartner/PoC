@@ -1,35 +1,39 @@
-import type { Variants, Transition } from 'framer-motion';
-
-import { transitionExit, transitionEnter } from './transition';
+import { VariantsType } from '../types';
+//
+import { varTranEnter, varTranExit } from './transition';
 
 // ----------------------------------------------------------------------
 
-type Direction = 'in' | 'out';
+export const varRotate = (props?: VariantsType) => {
+  const durationIn = props?.durationIn;
+  const durationOut = props?.durationOut;
+  const easeIn = props?.easeIn;
+  const easeOut = props?.easeOut;
 
-type Options = {
-  deg?: number;
-  transitionIn?: Transition;
-  transitionOut?: Transition;
-};
-
-export const varRotate = (direction: Direction, options?: Options): Variants => {
-  const deg = options?.deg || 360;
-  const transitionIn = options?.transitionIn;
-  const transitionOut = options?.transitionOut;
-
-  const variants: Record<Direction, Variants> = {
-    /**** In ****/
+  return {
+    // IN
     in: {
-      initial: { opacity: 0, rotate: -deg },
-      animate: { opacity: 1, rotate: 0, transition: transitionEnter(transitionIn) },
-      exit: { opacity: 0, rotate: -deg, transition: transitionExit(transitionOut) },
+      initial: { opacity: 0, rotate: -360 },
+      animate: {
+        opacity: 1,
+        rotate: 0,
+        transition: varTranEnter({ durationIn, easeIn }),
+      },
+      exit: {
+        opacity: 0,
+        rotate: -360,
+        transition: varTranExit({ durationOut, easeOut }),
+      },
     },
-    /**** Out ****/
+
+    // OUT
     out: {
       initial: { opacity: 1, rotate: 0 },
-      animate: { opacity: 0, rotate: -deg, transition: transitionExit(transitionOut) },
+      animate: {
+        opacity: 0,
+        rotate: -360,
+        transition: varTranExit({ durationOut, easeOut }),
+      },
     },
   };
-
-  return variants[direction];
 };

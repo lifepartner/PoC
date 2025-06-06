@@ -1,53 +1,34 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-
-import { useSearchParams } from 'src/routes/hooks';
-
-import { CONFIG } from 'src/global-config';
-
-import { SplashScreen } from 'src/components/loading-screen';
-
+import { useCallback, useEffect } from 'react';
+// routes
+import { paths } from 'src/routes/paths';
+import { useRouter, useSearchParams } from 'src/routes/hooks';
+//
 import { useAuthContext } from '../hooks';
 
 // ----------------------------------------------------------------------
 
-type GuestGuardProps = {
+type Props = {
   children: React.ReactNode;
 };
 
-export function GuestGuard({ children }: GuestGuardProps) {
-  const { loading, authenticated } = useAuthContext();
+export default function GuestGuard({ children }: Props) {
+  const router = useRouter();
 
   const searchParams = useSearchParams();
-  const returnTo = searchParams.get('returnTo') || CONFIG.auth.redirectPath;
 
-  const [isChecking, setIsChecking] = useState<boolean>(true);
+  const returnTo = searchParams.get('returnTo') || paths.dashboard.root;
 
-  const checkPermissions = async (): Promise<void> => {
-    if (loading) {
-      return;
-    }
+  const { authenticated } = useAuthContext();
 
+  const check = useCallback(() => {
     if (authenticated) {
-      // Redirect authenticated users to the returnTo path
-      // Using `window.location.href` instead of `router.replace` to avoid unnecessary re-rendering
-      // that might be caused by the AuthGuard component
-      window.location.href = returnTo;
-      return;
+      router.replace(returnTo);
     }
-
-    setIsChecking(false);
-  };
+  }, [authenticated, returnTo, router]);
 
   useEffect(() => {
-    checkPermissions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated, loading]);
-
-  if (isChecking) {
-    return <SplashScreen />;
-  }
+    check();
+  }, [check]);
 
   return <>{children}</>;
 }
