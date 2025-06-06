@@ -1,7 +1,4 @@
-export * from './drawer';
-
+export * from './types';
 export * from './context';
 
-export * from './settings-config';
-
-export type * from './types';
+export { default as SettingsDrawer } from './drawer';

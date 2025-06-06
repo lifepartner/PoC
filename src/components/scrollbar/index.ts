@@ -1,5 +1,3 @@
-export * from './classes';
+export * from './types';
 
-export * from './scrollbar';
-
-export type * from './types';
+export { default } from './scrollbar';

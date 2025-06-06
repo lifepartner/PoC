@@ -1,13 +1,12 @@
-import type { Metadata } from 'next';
-
-import { CONFIG } from 'src/global-config';
-
-import { FirebaseVerifyView } from 'src/auth/view/firebase';
+// sections
+import { FirebaseVerifyView } from 'src/sections/auth/firebase';
 
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = { title: `Verify | Firebase - ${CONFIG.appName}` };
+export const metadata = {
+  title: 'Firebase: Verify',
+};
 
-export default function Page() {
+export default function VerifyPage() {
   return <FirebaseVerifyView />;
 }

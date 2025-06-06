@@ -1,51 +1,38 @@
-import type { SvgIconProps } from '@mui/material/SvgIcon';
-
-import { memo, forwardRef } from 'react';
-
-import SvgIcon from '@mui/material/SvgIcon';
-
-import { CONFIG } from 'src/global-config';
-
-import { BackgroundShape } from './background-shape';
+import { memo } from 'react';
+// @mui
+import { useTheme } from '@mui/material/styles';
+import Box, { BoxProps } from '@mui/material/Box';
+//
+import BackgroundShape from './background-shape';
 
 // ----------------------------------------------------------------------
 
-type SvgProps = SvgIconProps & { hideBackground?: boolean };
+function ForbiddenIllustration({ ...other }: BoxProps) {
+  const theme = useTheme();
 
-const ForbiddenIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref) => {
-  const { hideBackground, sx, ...other } = props;
+  const PRIMARY_LIGHT = theme.palette.primary.light;
+
+  const PRIMARY_MAIN = theme.palette.primary.main;
+
+  const PRIMARY_DARK = theme.palette.primary.dark;
+
+  const PRIMARY_DARKER = theme.palette.primary.darker;
 
   return (
-    <SvgIcon
-      ref={ref}
+    <Box
+      component="svg"
+      width="100%"
+      height="100%"
       viewBox="0 0 480 360"
       xmlns="http://www.w3.org/2000/svg"
-      sx={[
-        (theme) => ({
-          '--primary-light': theme.vars.palette.primary.light,
-          '--primary-main': theme.vars.palette.primary.main,
-          '--primary-dark': theme.vars.palette.primary.dark,
-          '--primary-darker': theme.vars.palette.primary.darker,
-          width: 320,
-          maxWidth: 1,
-          flexShrink: 0,
-          height: 'auto',
-        }),
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
       {...other}
     >
-      {!hideBackground && <BackgroundShape />}
+      <BackgroundShape />
 
-      <image
-        href={`${CONFIG.assetsDir}/assets/illustrations/characters/character-4.webp`}
-        height="300"
-        x="220"
-        y="30"
-      />
+      <image href="/assets/illustrations/characters/character_4.png" height="300" x="220" y="30" />
 
       <path
-        fill="var(--primary-main)"
+        fill={PRIMARY_MAIN}
         d="M425.545 119.2c0-5-4.6-9-9.6-8.2-2-3.7-6-6-10.2-5.9 4.3-21.4-30-21.4-25.7 0-8.7-.8-15.1 9.4-10.4 16.8 2.1 3.5 5.9 5.6 10 5.5h38.7v-.1c4.1-.4 7.2-3.9 7.2-8.1zm-321.3 81.8c.1-4.2-4.1-7.8-8.2-7-1.7-3.2-5.1-5.1-8.8-5 3.8-18.4-25.8-18.4-22 0-7.4-.7-12.9 8.1-8.9 14.4 1.8 3 5.1 4.8 8.6 4.7h33.2v-.1c3.4-.4 6.1-3.4 6.1-7z"
         opacity="0.08"
       />
@@ -72,7 +59,7 @@ const ForbiddenIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref) =
       />
 
       <path
-        fill="var(--primary-darker)"
+        fill={PRIMARY_DARKER}
         d="M244.945 189.8c-67.6 1.3-77 97-11 111.4 81 11.8 92.7-107.3 11-111.4zm-48.5 56.2c-1-40.4 49.8-63.8 79.9-36.9l-68.3 68.3c-7.5-8.7-11.6-19.9-11.6-31.4zm48.5 48.5c-11.5 0-22.7-4.1-31.4-11.6l68.3-68.3c27 30.1 3.5 80.9-36.9 79.9z"
       />
 
@@ -90,12 +77,12 @@ const ForbiddenIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref) =
           y2="307.306"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="var(--primary-light)" />
-          <stop offset="1" stopColor="var(--primary-dark)" />
+          <stop stopColor={PRIMARY_LIGHT} />
+          <stop offset="1" stopColor={PRIMARY_DARK} />
         </linearGradient>
       </defs>
-    </SvgIcon>
+    </Box>
   );
-});
+}
 
 export default memo(ForbiddenIllustration);

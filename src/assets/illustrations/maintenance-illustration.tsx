@@ -1,44 +1,36 @@
-import type { SvgIconProps } from '@mui/material/SvgIcon';
-
-import { memo, forwardRef } from 'react';
-
-import SvgIcon from '@mui/material/SvgIcon';
-
-import { CONFIG } from 'src/global-config';
-
-import { BackgroundShape } from './background-shape';
+import { memo } from 'react';
+// @mui
+import { useTheme } from '@mui/material/styles';
+import Box, { BoxProps } from '@mui/material/Box';
+//
+import BackgroundShape from './background-shape';
 
 // ----------------------------------------------------------------------
 
-type SvgProps = SvgIconProps & { hideBackground?: boolean };
+function MaintenanceIllustration({ ...other }: BoxProps) {
+  const theme = useTheme();
 
-const MaintenanceIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref) => {
-  const { hideBackground, sx, ...other } = props;
+  const PRIMARY_LIGHT = theme.palette.primary.light;
+
+  const PRIMARY_MAIN = theme.palette.primary.main;
+
+  const PRIMARY_DARK = theme.palette.primary.dark;
+
+  const PRIMARY_DARKER = theme.palette.primary.darker;
 
   return (
-    <SvgIcon
-      ref={ref}
+    <Box
+      component="svg"
+      width="100%"
+      height="100%"
       viewBox="0 0 480 360"
       xmlns="http://www.w3.org/2000/svg"
-      sx={[
-        (theme) => ({
-          '--primary-light': theme.vars.palette.primary.light,
-          '--primary-main': theme.vars.palette.primary.main,
-          '--primary-dark': theme.vars.palette.primary.dark,
-          '--primary-darker': theme.vars.palette.primary.darker,
-          width: 320,
-          maxWidth: 1,
-          flexShrink: 0,
-          height: 'auto',
-        }),
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
       {...other}
     >
-      {!hideBackground && <BackgroundShape />}
+      <BackgroundShape />
 
       <path
-        fill="var(--primary-main)"
+        fill={PRIMARY_MAIN}
         d="M297.46 99.296l-185.934-5.29c-6.35-.18-11.526 4.158-11.526 9.693v159.882c0 5.534 5.176 9.742 11.526 9.4l185.934-10.028c5.28-.284 9.54-4.576 9.54-9.585v-144.73c0-5.012-4.26-9.194-9.54-9.342z"
         opacity="0.12"
       />
@@ -78,13 +70,13 @@ const MaintenanceIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref)
       />
 
       <path
-        fill="var(--primary-darker)"
+        fill={PRIMARY_DARKER}
         d="M238.581 194.781l-1.199 1.199-25.289-25.298 4.595-4.597a2.173 2.173 0 012.977-.091l18.553 16.422.004.004c3.645 3.243 3.812 8.907.359 12.361z"
         opacity="0.24"
       />
 
       <path
-        fill="var(--primary-darker)"
+        fill={PRIMARY_DARKER}
         d="M236.161 154.083c-5.298 5.298-13.254 6.31-19.566 3.038l-33.13 40.345a5.761 5.761 0 01-8.607.516l-3.145-3.145 6.122-6.125a2.174 2.174 0 103.075-3.076l42.668-42.682 1.907 1.907a3.308 3.308 0 004.68 0l7.117-7.12c1.142-1.144 3.097-.561 3.429 1.021 1.125 5.357-.392 11.161-4.55 15.321z"
         opacity="0.24"
       />
@@ -136,8 +128,8 @@ const MaintenanceIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref)
           y2="199.671"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="var(--primary-light)" />
-          <stop offset="1" stopColor="var(--primary-dark)" />
+          <stop stopColor={PRIMARY_LIGHT} />
+          <stop offset="1" stopColor={PRIMARY_DARK} />
         </linearGradient>
 
         <linearGradient
@@ -148,8 +140,8 @@ const MaintenanceIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref)
           y2="199.671"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="var(--primary-light)" />
-          <stop offset="1" stopColor="var(--primary-dark)" />
+          <stop stopColor={PRIMARY_LIGHT} />
+          <stop offset="1" stopColor={PRIMARY_DARK} />
         </linearGradient>
 
         <linearGradient
@@ -215,14 +207,9 @@ const MaintenanceIllustration = forwardRef<SVGSVGElement, SvgProps>((props, ref)
         </linearGradient>
       </defs>
 
-      <image
-        href={`${CONFIG.assetsDir}/assets/illustrations/characters/character-5.webp`}
-        height="300"
-        x="245"
-        y="30"
-      />
-    </SvgIcon>
+      <image href="/assets/illustrations/characters/character_5.png" height="300" x="245" y="30" />
+    </Box>
   );
-});
+}
 
 export default memo(MaintenanceIllustration);

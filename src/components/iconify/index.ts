@@ -1,3 +1,3 @@
-export * from './classes';
+export * from './types';
 
-export * from './iconify';
+export { default } from './iconify';

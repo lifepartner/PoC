@@ -2,7 +2,7 @@ import { _mock } from './_mock';
 
 // ----------------------------------------------------------------------
 
-export const _carouselsMembers = Array.from({ length: 6 }, (_, index) => ({
+export const _carouselsMembers = [...Array(6)].map((_, index) => ({
   id: _mock.id(index),
   name: _mock.fullName(index),
   role: _mock.role(index),
@@ -11,7 +11,7 @@ export const _carouselsMembers = Array.from({ length: 6 }, (_, index) => ({
 
 // ----------------------------------------------------------------------
 
-export const _faqs = Array.from({ length: 8 }, (_, index) => ({
+export const _faqs = [...Array(8)].map((_, index) => ({
   id: _mock.id(index),
   value: `panel${index + 1}`,
   heading: `Questions ${index + 1}`,
@@ -20,22 +20,22 @@ export const _faqs = Array.from({ length: 8 }, (_, index) => ({
 
 // ----------------------------------------------------------------------
 
-export const _addressBooks = Array.from({ length: 24 }, (_, index) => ({
+export const _addressBooks = [...Array(24)].map((_, index) => ({
   id: _mock.id(index),
   primary: index === 0,
   name: _mock.fullName(index),
   email: _mock.email(index + 1),
   fullAddress: _mock.fullAddress(index),
   phoneNumber: _mock.phoneNumber(index),
-  company: _mock.companyNames(index + 1),
+  company: _mock.companyName(index + 1),
   addressType: index === 0 ? 'Home' : 'Office',
 }));
 
 // ----------------------------------------------------------------------
 
-export const _contacts = Array.from({ length: 20 }, (_, index) => {
+export const _contacts = [...Array(20)].map((_, index) => {
   const status =
-    (index % 2 && 'online') || (index % 3 && 'offline') || (index % 4 && 'always') || 'busy';
+    (index % 2 && 'online') || (index % 3 && 'offline') || (index % 4 && 'alway') || 'busy';
 
   return {
     id: _mock.id(index),
@@ -52,7 +52,7 @@ export const _contacts = Array.from({ length: 20 }, (_, index) => {
 
 // ----------------------------------------------------------------------
 
-export const _notifications = Array.from({ length: 9 }, (_, index) => ({
+export const _notifications = [...Array(9)].map((_, index) => ({
   id: _mock.id(index),
   avatarUrl: [
     _mock.image.avatar(1),
@@ -72,9 +72,9 @@ export const _notifications = Array.from({ length: 9 }, (_, index) => ({
   category: [
     'Communication',
     'Project UI',
-    'File manager',
-    'File manager',
-    'File manager',
+    'File Manager',
+    'File Manager',
+    'File Manager',
     'Order',
     'Order',
     'Communication',
@@ -87,9 +87,9 @@ export const _notifications = Array.from({ length: 9 }, (_, index) => ({
     (index === 1 &&
       `<p><strong>Jayvon Hull</strong> mentioned you in <strong><a href='#'>Minimal UI</a></strong></p>`) ||
     (index === 2 &&
-      `<p><strong>Lainey Davidson</strong> added file to <strong><a href='#'>File manager</a></strong></p>`) ||
+      `<p><strong>Lainey Davidson</strong> added file to <strong><a href='#'>File Manager</a></strong></p>`) ||
     (index === 3 &&
-      `<p><strong>Angelique Morse</strong> added new tags to <strong><a href='#'>File manager<a/></strong></p>`) ||
+      `<p><strong>Angelique Morse</strong> added new tags to <strong><a href='#'>File Manager<a/></strong></p>`) ||
     (index === 4 &&
       `<p><strong>Giana Brandt</strong> request a payment of <strong>$200</strong></p>`) ||
     (index === 5 && `<p>Your order is placed waiting for shipping</p>`) ||
@@ -102,8 +102,16 @@ export const _notifications = Array.from({ length: 9 }, (_, index) => ({
 // ----------------------------------------------------------------------
 
 export const _mapContact = [
-  { latlng: [33, 65], address: _mock.fullAddress(1), phoneNumber: _mock.phoneNumber(1) },
-  { latlng: [-12.5, 18.5], address: _mock.fullAddress(2), phoneNumber: _mock.phoneNumber(2) },
+  {
+    latlng: [33, 65],
+    address: _mock.fullAddress(1),
+    phoneNumber: _mock.phoneNumber(1),
+  },
+  {
+    latlng: [-12.5, 18.5],
+    address: _mock.fullAddress(2),
+    phoneNumber: _mock.phoneNumber(2),
+  },
 ];
 
 // ----------------------------------------------------------------------
@@ -111,25 +119,51 @@ export const _mapContact = [
 export const _socials = [
   {
     value: 'facebook',
-    label: 'Facebook',
+    name: 'FaceBook',
+    icon: 'eva:facebook-fill',
+    color: '#1877F2',
     path: 'https://www.facebook.com/caitlyn.kerluke',
   },
   {
     value: 'instagram',
-    label: 'Instagram',
+    name: 'Instagram',
+    icon: 'ant-design:instagram-filled',
+    color: '#E02D69',
     path: 'https://www.instagram.com/caitlyn.kerluke',
   },
   {
     value: 'linkedin',
-    label: 'Linkedin',
+    name: 'Linkedin',
+    icon: 'eva:linkedin-fill',
+    color: '#007EBB',
     path: 'https://www.linkedin.com/caitlyn.kerluke',
   },
   {
     value: 'twitter',
-    label: 'Twitter',
+    name: 'Twitter',
+    icon: 'eva:twitter-fill',
+    color: '#00AAEC',
     path: 'https://www.twitter.com/caitlyn.kerluke',
   },
 ];
+
+// ----------------------------------------------------------------------
+
+export const _homePlans = [...Array(3)].map((_, index) => ({
+  license: ['Standard', 'Standard Plus', 'Extended'][index],
+  commons: ['One end products', '12 months updates', '6 months of support'],
+  options: [
+    'JavaScript version',
+    'TypeScript version',
+    'Design Resources',
+    'Commercial applications',
+  ],
+  icons: [
+    '/assets/icons/platforms/ic_figma.svg',
+    '/assets/icons/platforms/ic_js.svg',
+    '/assets/icons/platforms/ic_ts.svg',
+  ],
+}));
 
 // ----------------------------------------------------------------------
 
@@ -138,36 +172,36 @@ export const _pricingPlans = [
     subscription: 'basic',
     price: 0,
     caption: 'Forever',
-    lists: ['3 prototypes', '3 boards', 'Up to 5 team members'],
-    labelAction: 'Current plan',
+    lists: ['3 Prototypes', '3 Boards', 'Up To 5 Team Members'],
+    labelAction: 'Current Plan',
   },
   {
     subscription: 'starter',
     price: 4.99,
     caption: 'Saving $24 a year',
     lists: [
-      '3 prototypes',
-      '3 boards',
-      'Up to 5 team members',
-      'Advanced security',
-      'Issue escalation',
+      '3 Prototypes',
+      '3 Boards',
+      'Up To 5 Team Members',
+      'Advanced Security',
+      'Issue Escalation',
     ],
-    labelAction: 'Choose starter',
+    labelAction: 'Choose Starter',
   },
   {
     subscription: 'premium',
     price: 9.99,
     caption: 'Saving $124 a year',
     lists: [
-      '3 prototypes',
-      '3 boards',
-      'Up to 5 team members',
-      'Advanced security',
-      'Issue escalation',
-      'Issue development license',
+      '3 Prototypes',
+      '3 Boards',
+      'Up To 5 Team Members',
+      'Advanced Security',
+      'Issue Escalation',
+      'Issue Development license',
       'Permissions & workflows',
     ],
-    labelAction: 'Choose premium',
+    labelAction: 'Choose Premium',
   },
 ];
 

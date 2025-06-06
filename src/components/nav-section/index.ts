@@ -1,13 +1,5 @@
-export * from './mini';
+export * from './types';
 
-export * from './utils';
-
-export * from './styles';
-
-export * from './vertical';
-
-export * from './components';
-
-export * from './horizontal';
-
-export type * from './types';
+export { default as NavSectionMini } from './mini';
+export { default as NavSectionVertical } from './vertical';
+export { default as NavSectionHorizontal } from './horizontal';

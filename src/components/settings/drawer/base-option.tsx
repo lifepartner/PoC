@@ -1,101 +1,58 @@
-import type { ButtonBaseProps } from '@mui/material/ButtonBase';
-
-import { varAlpha } from 'minimal-shared/utils';
-
-import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
-import { styled } from '@mui/material/styles';
+// @mui
+import { alpha } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
 import ButtonBase from '@mui/material/ButtonBase';
-
-import { CONFIG } from 'src/global-config';
-
-import { Iconify } from 'src/components/iconify';
-
-import { SvgColor } from '../../svg-color';
+//
+import SvgColor from '../../svg-color';
 
 // ----------------------------------------------------------------------
 
-export type BaseOptionProps = ButtonBaseProps & {
-  icon: string;
-  label: string;
-  tooltip?: string;
-  selected: boolean;
-  onChangeOption: () => void;
+type Props = {
+  icons: string[];
+  options: string[];
+  value: string;
+  onChange: (newValue: string) => void;
 };
 
-export function BaseOption({
-  sx,
-  icon,
-  label,
-  tooltip,
-  selected,
-  onChangeOption,
-  ...other
-}: BaseOptionProps) {
+export default function BaseOptions({ icons, options, value, onChange }: Props) {
   return (
-    <ItemRoot disableRipple selected={selected} onClick={onChangeOption} sx={sx} {...other}>
-      <TopContainer>
-        <SvgColor src={`${CONFIG.assetsDir}/assets/icons/settings/ic-${icon}.svg`} />
-        <Switch name={label} size="small" color="default" checked={selected} sx={{ mr: -0.75 }} />
-      </TopContainer>
+    <Stack direction="row" spacing={2}>
+      {options.map((option, index) => {
+        const selected = value === option;
 
-      <BottomContainer>
-        <ItemLabel>{label}</ItemLabel>
-
-        {tooltip && (
-          <Tooltip
-            arrow
-            title={tooltip}
-            slotProps={{ tooltip: { sx: { maxWidth: 240, mr: 0.5 } } }}
+        return (
+          <ButtonBase
+            key={option}
+            onClick={() => onChange(option)}
+            sx={{
+              width: 1,
+              height: 80,
+              borderRadius: 1,
+              border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.08)}`,
+              ...(selected && {
+                bgcolor: 'background.paper',
+                boxShadow: (theme) =>
+                  `-24px 8px 24px -4px ${alpha(
+                    theme.palette.mode === 'light'
+                      ? theme.palette.grey[500]
+                      : theme.palette.common.black,
+                    0.08
+                  )}`,
+              }),
+              '& .svg-color': {
+                background: (theme) =>
+                  `linear-gradient(135deg, ${theme.palette.grey[500]} 0%, ${theme.palette.grey[600]} 100%)`,
+                ...(selected && {
+                  background: (theme) =>
+                    `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
+                }),
+              },
+            }}
           >
-            <Iconify
-              width={16}
-              icon="eva:info-outline"
-              sx={{ cursor: 'pointer', color: 'text.disabled' }}
-            />
-          </Tooltip>
-        )}
-      </BottomContainer>
-    </ItemRoot>
+            <SvgColor src={`/assets/icons/setting/ic_${index === 0 ? icons[0] : icons[1]}.svg`} />
+          </ButtonBase>
+        );
+      })}
+    </Stack>
   );
 }
-
-// ----------------------------------------------------------------------
-
-const ItemRoot = styled(ButtonBase, {
-  shouldForwardProp: (prop: string) => !['selected', 'sx'].includes(prop),
-})<{ selected: boolean }>(({ selected, theme }) => ({
-  cursor: 'pointer',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  padding: theme.spacing(2, 2.5),
-  borderRadius: theme.shape.borderRadius * 2,
-  border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
-  '&:hover': {
-    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-  },
-  ...(selected && {
-    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-  }),
-}));
-
-const TopContainer = styled('div')(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: theme.spacing(3),
-  justifyContent: 'space-between',
-}));
-
-const BottomContainer = styled('div')(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-}));
-
-const ItemLabel = styled('span')(({ theme }) => ({
-  lineHeight: '18px',
-  fontSize: theme.typography.pxToRem(13),
-  fontWeight: theme.typography.fontWeightSemiBold,
-}));

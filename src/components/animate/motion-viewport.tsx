@@ -1,43 +1,41 @@
-import type { MotionProps } from 'framer-motion';
-import type { BoxProps } from '@mui/material/Box';
-
-import { m } from 'framer-motion';
-import { forwardRef } from 'react';
-
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { m, MotionProps } from 'framer-motion';
+// @mui
+import Box, { BoxProps } from '@mui/material/Box';
+// hooks
+import { useResponsive } from 'src/hooks/use-responsive';
+//
 import { varContainer } from './variants';
 
 // ----------------------------------------------------------------------
 
-export type MotionViewportProps = BoxProps &
-  MotionProps & {
-    disableAnimate?: boolean;
-  };
+type IProps = BoxProps & MotionProps;
 
-export const MotionViewport = forwardRef<HTMLDivElement, MotionViewportProps>((props, ref) => {
-  const { children, viewport, disableAnimate = true, ...other } = props;
+interface Props extends IProps {
+  children: React.ReactNode;
+  disableAnimatedMobile?: boolean;
+}
 
-  const theme = useTheme();
-  const smDown = useMediaQuery(theme.breakpoints.down('sm'));
+export default function MotionViewport({
+  children,
+  disableAnimatedMobile = true,
+  ...other
+}: Props) {
+  const smDown = useResponsive('down', 'sm');
 
-  const disabled = smDown && disableAnimate;
-
-  const baseProps = disabled
-    ? {}
-    : {
-        component: m.div,
-        initial: 'initial',
-        whileInView: 'animate',
-        variants: varContainer(),
-        viewport: { once: true, amount: 0.3, ...viewport },
-      };
+  if (smDown && disableAnimatedMobile) {
+    return <Box {...other}>{children}</Box>;
+  }
 
   return (
-    <Box ref={ref} {...baseProps} {...other}>
+    <Box
+      component={m.div}
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true, amount: 0.3 }}
+      variants={varContainer()}
+      {...other}
+    >
       {children}
     </Box>
   );
-});
+}

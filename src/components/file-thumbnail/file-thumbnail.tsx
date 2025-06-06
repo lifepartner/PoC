@@ -1,108 +1,84 @@
-import { forwardRef } from 'react';
-import { mergeClasses } from 'minimal-shared/utils';
-
+import { Theme, SxProps } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
-import { styled } from '@mui/material/styles';
-
-import { fileThumbnailClasses } from './classes';
-import { fileData, fileThumb, fileFormat } from './utils';
-import { RemoveButton, DownloadButton } from './action-buttons';
-
-import type { FileThumbnailProps } from './types';
+//
+import { fileData, fileFormat, fileThumb } from './utils';
+import DownloadButton from './download-button';
 
 // ----------------------------------------------------------------------
 
-export const FileThumbnail = forwardRef<HTMLDivElement, FileThumbnailProps>((props, ref) => {
-  const { file, tooltip, onRemove, imageView, slotProps, onDownload, className, sx, ...other } =
-    props;
+type FileIconProps = {
+  file: File | string;
+  tooltip?: boolean;
+  imageView?: boolean;
+  onDownload?: VoidFunction;
+  sx?: SxProps<Theme>;
+  imgSx?: SxProps<Theme>;
+};
 
-  const { icon, removeBtn, downloadBtn, tooltip: tooltipProps } = slotProps ?? {};
+export default function FileThumbnail({
+  file,
+  tooltip,
+  imageView,
+  onDownload,
+  sx,
+  imgSx,
+}: FileIconProps) {
+  const { name = '', path = '', preview = '' } = fileData(file);
 
-  const { name, path } = fileData(file);
+  const format = fileFormat(path || preview);
 
-  const previewUrl = typeof file === 'string' ? file : URL.createObjectURL(file);
-
-  const format = fileFormat(path ?? previewUrl);
-
-  const renderItem = () => (
-    <ItemRoot
-      ref={ref}
-      className={mergeClasses([fileThumbnailClasses.root, className])}
-      sx={sx}
-      {...other}
-    >
-      {format === 'image' && imageView ? (
-        <ItemImg src={previewUrl} className={fileThumbnailClasses.img} {...slotProps?.img} />
-      ) : (
-        <ItemIcon src={fileThumb(format)} className={fileThumbnailClasses.icon} {...icon} />
-      )}
-
-      {onRemove && (
-        <RemoveButton
-          onClick={onRemove}
-          className={fileThumbnailClasses.removeBtn}
-          {...removeBtn}
-        />
-      )}
-
-      {onDownload && (
-        <DownloadButton
-          onClick={onDownload}
-          className={fileThumbnailClasses.downloadBtn}
-          {...downloadBtn}
-        />
-      )}
-    </ItemRoot>
-  );
+  const renderContent =
+    format === 'image' && imageView ? (
+      <Box
+        component="img"
+        src={preview}
+        sx={{
+          width: 1,
+          height: 1,
+          flexShrink: 0,
+          objectFit: 'cover',
+          ...imgSx,
+        }}
+      />
+    ) : (
+      <Box
+        component="img"
+        src={fileThumb(format)}
+        sx={{
+          width: 32,
+          height: 32,
+          flexShrink: 0,
+          ...sx,
+        }}
+      />
+    );
 
   if (tooltip) {
     return (
-      <Tooltip
-        arrow
-        title={name}
-        {...tooltipProps}
-        slotProps={{
-          ...tooltipProps?.slotProps,
-          popper: {
-            modifiers: [
-              {
-                name: 'offset',
-                options: { offset: [0, -12] },
-              },
-            ],
-            ...tooltipProps?.slotProps?.popper,
-          },
-        }}
-      >
-        {renderItem()}
+      <Tooltip title={name}>
+        <Stack
+          flexShrink={0}
+          component="span"
+          alignItems="center"
+          justifyContent="center"
+          sx={{
+            width: 'fit-content',
+            height: 'inherit',
+          }}
+        >
+          {renderContent}
+          {onDownload && <DownloadButton onDownload={onDownload} />}
+        </Stack>
       </Tooltip>
     );
   }
 
-  return renderItem();
-});
-
-// ----------------------------------------------------------------------
-
-const ItemRoot = styled('span')(({ theme }) => ({
-  width: 36,
-  height: 36,
-  flexShrink: 0,
-  alignItems: 'center',
-  position: 'relative',
-  display: 'inline-flex',
-  justifyContent: 'center',
-  borderRadius: theme.shape.borderRadius * 1.25,
-}));
-
-const ItemIcon = styled('img')(() => ({
-  width: '100%',
-  height: '100%',
-}));
-
-const ItemImg = styled('img')(() => ({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  borderRadius: 'inherit',
-}));
+  return (
+    <>
+      {renderContent}
+      {onDownload && <DownloadButton onDownload={onDownload} />}
+    </>
+  );
+}

@@ -1,11 +1,12 @@
-import { CONFIG } from 'src/global-config';
-
-import { BlankView } from 'src/sections/blank/view';
+// sections
+import FourView from 'src/sections/four/view';
 
 // ----------------------------------------------------------------------
 
-export const metadata = { title: `Page four | Dashboard - ${CONFIG.appName}` };
+export const metadata = {
+  title: 'Dashboard: Four',
+};
 
 export default function Page() {
-  return <BlankView title="Page four" />;
+  return <FourView />;
 }

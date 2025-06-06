@@ -1,101 +1,72 @@
-import { useBoolean } from 'minimal-shared/hooks';
-import { mergeClasses } from 'minimal-shared/utils';
-
+import { memo, useState, useCallback } from 'react';
+// @mui
+import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
 import Collapse from '@mui/material/Collapse';
-import { useTheme } from '@mui/material/styles';
+//
+import { NavSectionProps, NavListProps, NavConfigProps } from '../types';
+import { navVerticalConfig } from '../config';
+import { StyledSubheader } from './styles';
 
-import { NavList } from './nav-list';
-import { Nav, NavUl, NavLi, NavSubheader } from '../components';
-import { navSectionClasses, navSectionCssVars } from '../styles';
-
-import type { NavGroupProps, NavSectionProps } from '../types';
+import NavList from './nav-list';
 
 // ----------------------------------------------------------------------
 
-export function NavSectionVertical({
-  sx,
-  data,
-  render,
-  className,
-  slotProps,
-  currentRole,
-  enabledRootRedirect,
-  cssVars: overridesVars,
-  ...other
-}: NavSectionProps) {
-  const theme = useTheme();
-
-  const cssVars = { ...navSectionCssVars.vertical(theme), ...overridesVars };
-
+function NavSectionVertical({ data, config, sx, ...other }: NavSectionProps) {
   return (
-    <Nav
-      className={mergeClasses([navSectionClasses.vertical, className])}
-      sx={[{ ...cssVars }, ...(Array.isArray(sx) ? sx : [sx])]}
-      {...other}
-    >
-      <NavUl sx={{ flex: '1 1 auto', gap: 'var(--nav-item-gap)' }}>
-        {data.map((group) => (
-          <Group
-            key={group.subheader ?? group.items[0].title}
-            subheader={group.subheader}
-            items={group.items}
-            render={render}
-            slotProps={slotProps}
-            currentRole={currentRole}
-            enabledRootRedirect={enabledRootRedirect}
-          />
-        ))}
-      </NavUl>
-    </Nav>
+    <Stack sx={sx} {...other}>
+      {data.map((group, index) => (
+        <Group
+          key={group.subheader || index}
+          subheader={group.subheader}
+          items={group.items}
+          config={navVerticalConfig(config)}
+        />
+      ))}
+    </Stack>
   );
 }
 
+export default memo(NavSectionVertical);
+
 // ----------------------------------------------------------------------
 
-function Group({
-  items,
-  render,
-  subheader,
-  slotProps,
-  currentRole,
-  enabledRootRedirect,
-}: NavGroupProps) {
-  const groupOpen = useBoolean(true);
+type GroupProps = {
+  subheader: string;
+  items: NavListProps[];
+  config: NavConfigProps;
+};
 
-  const renderContent = () => (
-    <NavUl sx={{ gap: 'var(--nav-item-gap)' }}>
-      {items.map((list) => (
-        <NavList
-          key={list.title}
-          data={list}
-          render={render}
-          depth={1}
-          slotProps={slotProps}
-          currentRole={currentRole}
-          enabledRootRedirect={enabledRootRedirect}
-        />
-      ))}
-    </NavUl>
-  );
+function Group({ subheader, items, config }: GroupProps) {
+  const [open, setOpen] = useState(true);
+
+  const handleToggle = useCallback(() => {
+    setOpen((prev) => !prev);
+  }, []);
+
+  const renderContent = items.map((list) => (
+    <NavList
+      key={list.title + list.path}
+      data={list}
+      depth={1}
+      hasChild={!!list.children}
+      config={config}
+    />
+  ));
 
   return (
-    <NavLi>
+    <List disablePadding sx={{ px: 2 }}>
       {subheader ? (
         <>
-          <NavSubheader
-            data-title={subheader}
-            open={groupOpen.value}
-            onClick={groupOpen.onToggle}
-            sx={slotProps?.subheader}
-          >
+          <StyledSubheader disableGutters disableSticky onClick={handleToggle} config={config}>
             {subheader}
-          </NavSubheader>
+          </StyledSubheader>
 
-          <Collapse in={groupOpen.value}>{renderContent()}</Collapse>
+          <Collapse in={open}>{renderContent}</Collapse>
         </>
       ) : (
-        renderContent()
+        renderContent
       )}
-    </NavLi>
+    </List>
   );
 }

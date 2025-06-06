@@ -1,64 +1,53 @@
-import type { Breakpoint } from '@mui/material/styles';
-import type { NavSectionProps } from 'src/components/nav-section';
-
-import { varAlpha, mergeClasses } from 'minimal-shared/utils';
-
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-
+import { memo } from 'react';
+// @mui
+import { useTheme } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+// theme
+import { bgBlur } from 'src/theme/css';
+// hooks
+import { useMockedUser } from 'src/hooks/use-mocked-user';
+// components
 import { NavSectionHorizontal } from 'src/components/nav-section';
-
-import { layoutClasses } from '../core/classes';
+//
+import { HEADER } from '../config-layout';
+import { useNavData } from './config-navigation';
+import { HeaderShadow } from '../_common';
 
 // ----------------------------------------------------------------------
 
-export type NavHorizontalProps = NavSectionProps & {
-  layoutQuery?: Breakpoint;
-};
+function NavHorizontal() {
+  const theme = useTheme();
 
-export function NavHorizontal({
-  sx,
-  data,
-  className,
-  layoutQuery = 'md',
-  ...other
-}: NavHorizontalProps) {
+  const { user } = useMockedUser();
+
+  const navData = useNavData();
+
   return (
-    <Box
-      className={mergeClasses([layoutClasses.nav.root, layoutClasses.nav.horizontal, className])}
-      sx={[
-        (theme) => ({
-          width: 1,
-          position: 'relative',
-          flexDirection: 'column',
-          display: { xs: 'none', [layoutQuery]: 'flex' },
-          borderBottom: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-        }),
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
+    <AppBar
+      component="nav"
+      sx={{
+        top: HEADER.H_DESKTOP_OFFSET,
+      }}
     >
-      <Divider
+      <Toolbar
         sx={{
-          top: 0,
-          left: 0,
-          width: 1,
-          zIndex: 9,
-          position: 'absolute',
-          borderStyle: 'dashed',
-        }}
-      />
-
-      <Box
-        sx={{
-          px: 1.5,
-          height: 'var(--layout-nav-horizontal-height)',
-          backgroundColor: 'var(--layout-nav-horizontal-bg)',
-          backdropFilter: `blur(var(--layout-header-blur))`,
-          WebkitBackdropFilter: `blur(var(--layout-header-blur))`,
+          ...bgBlur({
+            color: theme.palette.background.default,
+          }),
         }}
       >
-        <NavSectionHorizontal data={data} {...other} />
-      </Box>
-    </Box>
+        <NavSectionHorizontal
+          data={navData}
+          config={{
+            currentRole: user?.role || 'admin',
+          }}
+        />
+      </Toolbar>
+
+      <HeaderShadow />
+    </AppBar>
   );
 }
+
+export default memo(NavHorizontal);

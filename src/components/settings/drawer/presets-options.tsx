@@ -1,62 +1,58 @@
-import type { BoxProps } from '@mui/material/Box';
-
+// @mui
+import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { alpha as hexAlpha } from '@mui/material/styles';
-
-import { CONFIG } from 'src/global-config';
-
-import { OptionButton } from './styles';
-import { SvgColor } from '../../svg-color';
-
-import type { SettingsState } from '../types';
+import ButtonBase from '@mui/material/ButtonBase';
+// theme
+import { primaryPresets } from 'src/theme/options/presets';
 
 // ----------------------------------------------------------------------
 
-export type PresetsOptionsProps = BoxProps & {
-  value: SettingsState['primaryColor'];
-  options: { name: SettingsState['primaryColor']; value: string }[];
-  onChangeOption: (newOption: SettingsState['primaryColor']) => void;
+type PresetsOptionsProps = {
+  value: string;
+  onChange: (newValue: string) => void;
 };
 
-export function PresetsOptions({
-  sx,
-  value,
-  options,
-  onChangeOption,
-  ...other
-}: PresetsOptionsProps) {
+export default function PresetsOptions({ value, onChange }: PresetsOptionsProps) {
+  const options = primaryPresets.map((color) => ({
+    name: color.name,
+    value: color.main,
+  }));
+
   return (
-    <Box
-      sx={[
-        () => ({
-          gap: 1.5,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-        }),
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
-      {...other}
-    >
+    <Box columnGap={2} rowGap={1.5} display="grid" gridTemplateColumns="repeat(3, 1fr)">
       {options.map((option) => {
         const selected = value === option.name;
 
         return (
-          <OptionButton
+          <ButtonBase
             key={option.name}
-            onClick={() => onChangeOption(option.name)}
+            onClick={() => onChange(option.name)}
             sx={{
-              height: 64,
-              color: option.value,
+              height: 56,
+              borderRadius: 1,
+              border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.08)}`,
               ...(selected && {
-                bgcolor: hexAlpha(option.value, 0.08),
+                borderColor: 'transparent',
+                bgcolor: alpha(option.value, 0.08),
               }),
             }}
           >
-            <SvgColor
-              src={`${CONFIG.assetsDir}/assets/icons/settings/ic-siderbar-duotone.svg`}
-              sx={{ width: 28, height: 28, color: 'currentColor' }}
+            <Box
+              sx={{
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                bgcolor: option.value,
+                transition: (theme) =>
+                  theme.transitions.create(['transform'], {
+                    duration: theme.transitions.duration.shorter,
+                  }),
+                ...(selected && {
+                  transform: 'scale(2)',
+                }),
+              }}
             />
-          </OptionButton>
+          </ButtonBase>
         );
       })}
     </Box>

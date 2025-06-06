@@ -1,5 +1,3 @@
-export * from './fields';
+export { default as RHFTextField } from './rhf-text-field';
 
-export * from './form-provider';
-
-export * from './rhf-text-field';
+export { default } from './form-provider';

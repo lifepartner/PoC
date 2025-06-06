@@ -1,5 +1,3 @@
-export * from './auth-guard';
-
-export * from './guest-guard';
-
-export * from './role-based-guard';
+export { default as AuthGuard } from './auth-guard';
+export { default as GuestGuard } from './guest-guard';
+export { default as RoleBasedGuard } from './role-based-guard';

@@ -1,53 +1,53 @@
-'use client';
-
-import type { Theme, SxProps } from '@mui/material/styles';
-
 import { m } from 'framer-motion';
-
+// @mui
+import { Theme, SxProps } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-
+// hooks
+import { useMockedUser } from 'src/hooks/use-mocked-user';
+// assets
 import { ForbiddenIllustration } from 'src/assets/illustrations';
-
-import { varBounce, MotionContainer } from 'src/components/animate';
+// components
+import { MotionContainer, varBounce } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export type RoleBasedGuardProp = {
-  sx?: SxProps<Theme>;
-  currentRole: string;
+type RoleBasedGuardProp = {
   hasContent?: boolean;
-  acceptRoles: string[];
+  roles?: string[];
   children: React.ReactNode;
+  sx?: SxProps<Theme>;
 };
 
-export function RoleBasedGuard({
-  sx,
-  children,
-  hasContent,
-  currentRole,
-  acceptRoles,
-}: RoleBasedGuardProp) {
-  if (typeof acceptRoles !== 'undefined' && !acceptRoles.includes(currentRole)) {
+export default function RoleBasedGuard({ hasContent, roles, children, sx }: RoleBasedGuardProp) {
+  // Logic here to get current user role
+  const { user } = useMockedUser();
+
+  // const currentRole = 'user';
+  const currentRole = user?.role; // admin;
+
+  if (typeof roles !== 'undefined' && !roles.includes(currentRole)) {
     return hasContent ? (
-      <Container
-        component={MotionContainer}
-        sx={[{ textAlign: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]}
-      >
-        <m.div variants={varBounce('in')}>
+      <Container component={MotionContainer} sx={{ textAlign: 'center', ...sx }}>
+        <m.div variants={varBounce().in}>
           <Typography variant="h3" sx={{ mb: 2 }}>
-            Permission denied
+            Permission Denied
           </Typography>
         </m.div>
 
-        <m.div variants={varBounce('in')}>
+        <m.div variants={varBounce().in}>
           <Typography sx={{ color: 'text.secondary' }}>
-            You do not have permission to access this page.
+            You do not have permission to access this page
           </Typography>
         </m.div>
 
-        <m.div variants={varBounce('in')}>
-          <ForbiddenIllustration sx={{ my: { xs: 5, sm: 10 } }} />
+        <m.div variants={varBounce().in}>
+          <ForbiddenIllustration
+            sx={{
+              height: 260,
+              my: { xs: 5, sm: 10 },
+            }}
+          />
         </m.div>
       </Container>
     ) : null;

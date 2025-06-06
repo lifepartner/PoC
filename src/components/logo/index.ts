@@ -1,3 +1,1 @@
-export * from './logo';
-
-export * from './classes';
+export { default } from './logo';

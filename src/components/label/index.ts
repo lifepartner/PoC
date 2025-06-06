@@ -1,7 +1,3 @@
-export * from './label';
+export * from './types';
 
-export * from './styles';
-
-export * from './classes';
-
-export type * from './types';
+export { default } from './label';
