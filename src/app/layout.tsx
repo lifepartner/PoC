@@ -1,3 +1,6 @@
+// i18n
+import 'src/locales/i18n';
+
 // scrollbar
 import 'simplebar-react/dist/simplebar.min.css';
 
@@ -19,9 +22,9 @@ import { AuthProvider, AuthConsumer } from 'src/auth/context/firebase';
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Minimal UI Kit',
+  title: 'RePr',
   description:
-    'The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI ©, ready to be customized to your style',
+    'PoC開発',
   keywords: 'react,material,kit,application,dashboard,admin,template',
   themeColor: '#000000',
   manifest: '/manifest.json',
